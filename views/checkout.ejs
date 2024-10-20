@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="shortcut icon" type="x-icon" href="/img/BookMate2.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <title>BookMate - Checkout</title>
+</head>
+<body>
+    <header class="header">
+        <%- include('navbar') %>
+    </header>
+
+    <div class="content">
+        <h2 class="checkout-title">Checkout</h2>
+        <div class="checkout-container">
+            <div class="checkout-items">
+                <!-- Dynamically populated cart items will appear here -->
+                <div class="checkout-item">
+                    <img src="/img/NB1.png" alt="Book 1" class="item-image">
+                    <div class="item-details">
+                        <h3 class="item-title">ปณิธานสะท้านภพสยบมาร(เล่มที่:2)</h3>
+                        <p class="item-author">Author Name</p>
+                        <p class="item-price">฿300.75</p>
+                        <button class="remove-item">Remove</button>
+                    </div>
+                </div>
+                <!-- Repeat for each item in the cart -->
+            </div>
+
+            <div class="checkout-summary">
+                <h3>Order Summary</h3>
+                <p class="subtotal">Subtotal: ฿0.00</p>
+                <p class="shipping">Shipping: ฿50.00</p>
+                <p class="total">Total: ฿0.00</p>
+                <button class="place-order-btn">Place Order</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <%- include('footer') %>
+    </footer>
+
+    <script type="text/javascript" src="/js/checkout.js"></script>
+    <script type="text/javascript" src="/js/purchaseHistory"></script>
+</body>
+</html>

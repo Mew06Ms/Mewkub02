@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link rel="shortcut icon" type="x-icon" href="/img/BookMate2.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="/css/styles.css" />
+    <title>BookMate</title>
+</head>
+<body>
+    <header>
+        <%- include('navbar') %>
+    </header>
+
+    <!-- Filter Section -->
+ <!-- Filter Section -->
+<section class="filter-section">
+    <h2>Filter by Type</h2>
+    <select id="bookFilter" onchange="filterBooks()">
+        <option value="all">All</option>
+        <option value="Novel">Novel</option>
+        <option value="Manga">Manga</option>
+        <option value="Journal">Journal</option>
+    </select>
+</section>
+
+
+    <!-- Books Section -->
+    <section class="books-section">
+        <h2>Available Books</h2>
+        <div class="books-grid">
+            <% books.forEach(book => { %>
+                <div class="book-item" data-type="<%= book['Book-type'] %>">
+                    <a href="#" class="book-link" data-title="<%= book['ชื่อหนังสือภาษาไทย'] %>" 
+                        data-author="<%= book['ผู้เขียน'] %>"
+                        data-publisher="<%= book['สำนักพิมพ์'] %>"
+                        data-year="<%= book['ปีที่พิมพ์'] %>"
+                        data-edition="<%= book['ฉบับที่'] %>"
+                        data-isbn="<%= book['ISBN'] %>"
+                        data-description="<%= book['รายละเอียดหนังสือ'] %>" 
+                        data-price="<%= book.ราคา %>" 
+                        data-image="<%= book.IMG %>"
+                        onclick="openBookModal(event)">
+                        <img src="<%= book.IMG %>" alt="<%= book['ชื่อหนังสือภาษาไทย'] %>">
+                        <span class="book-type"><%= book['Book_type'] %></span>
+                        <h3><%= book['ชื่อหนังสือภาษาไทย'] %></h3>
+                        <p>฿<%= book.ราคา %></p>
+                    </a>
+                    <button class="add-to-cart" 
+                            data-title="<%= book['ชื่อหนังสือภาษาไทย'] %>" 
+                            data-price="<%= book.ราคา %>" 
+                            data-image="<%= book.IMG %>">Add to Cart</button>
+                    <p class="available-count">Remaining: <span><%= book.จำนวน %></span> books left</p>
+                </div>
+            <% }); %>
+        </div>
+    </section>
+
+    <!-- Book Details Modal -->
+    <div id="bookModal" class="modal-book">
+        <div class="modal-content-book">
+            <span class="close-btn" onclick="closeBookModal()">&times;</span>
+            <div class="book-modal-container">
+                <div class="book-modal-cover">
+                    <img id="modal-book-image" src="" alt="Book Cover" />
+                </div>
+                <div class="book-modal-info">
+                    <h2 id="modal-book-title"></h2>
+                    <p id="modal-book-author"></p>
+                    <p id="modal-book-publisher"></p>
+                    <p id="modal-book-year"></p>
+                    <p id="modal-book-edition"></p>
+                    <p id="modal-book-isbn"></p>
+                    <p id="modal-book-description"></p>
+                    <p class="price" id="modal-book-price"></p>
+                    <button class="add-to-cart-modal-btn" id="modal-add-to-cart-btn">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter and Modal Script -->
+    <script>
+    // Filter books based on selected type
+    function filterBooks() {
+        const filterValue = document.getElementById("bookFilter").value;
+        const books = document.querySelectorAll(".book-item");
+
+        books.forEach(book => {
+            if (filterValue === "all" || book.dataset.type === filterValue) {
+                book.style.display = "block";
+            } else {
+                book.style.display = "none";
+            }
+        });
+    }
+
+    // Open Book Modal
+    function openBookModal(event) {
+        event.preventDefault();
+        const bookLink = event.currentTarget;
+
+        // Set modal data
+        document.getElementById('modal-book-image').src = bookLink.dataset.image;
+        document.getElementById('modal-book-title').innerText = bookLink.dataset.title;
+        document.getElementById('modal-book-author').innerText = "Author: " + bookLink.dataset.author;
+        document.getElementById('modal-book-publisher').innerText = "Publisher: " + bookLink.dataset.publisher;
+        document.getElementById('modal-book-year').innerText = "Year: " + bookLink.dataset.year;
+        document.getElementById('modal-book-edition').innerText = "Edition: " + bookLink.dataset.edition;
+        document.getElementById('modal-book-isbn').innerText = "ISBN: " + bookLink.dataset.isbn;
+        document.getElementById('modal-book-description').innerText = bookLink.dataset.description;
+        document.getElementById('modal-book-price').innerText = "฿" + bookLink.dataset.price;
+
+        // Update add-to-cart button
+        const addToCartBtn = document.getElementById('modal-add-to-cart-btn');
+        addToCartBtn.dataset.title = bookLink.dataset.title;
+        addToCartBtn.dataset.price = bookLink.dataset.price;
+        addToCartBtn.dataset.image = bookLink.dataset.image;
+
+        // Show modal
+        document.getElementById('bookModal').style.display = 'block';
+    }
+
+    // Close Book Modal
+    function closeBookModal() {
+        document.getElementById('bookModal').style.display = 'none';
+    }
+
+    // Add event listener to the modal add-to-cart button
+    document.getElementById('modal-add-to-cart-btn').addEventListener('click', (e) => {
+        const title = e.target.dataset.title;
+        const price = parseFloat(e.target.dataset.price);
+        const image = e.target.dataset.image;
+
+        // Check available count from the modal
+        const availableCount = parseInt(document.querySelector('.available-count span').textContent);
+
+        // Check if there are books available
+        if (availableCount > 0) {
+            const cartItem = { title, price, image };
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            cart.push(cartItem);
+            localStorage.setItem('cart', JSON.stringify(cart));
+
+            // Decrease the available count in the modal (optional)
+            const countElement = document.querySelector('.available-count span');
+            countElement.textContent = availableCount - 1;
+
+            // Show success notification using SweetAlert
+            Swal.fire({
+                icon: 'success',
+                title: 'Added to Cart!',
+                text: `${title} has been added to your cart.`,
+                confirmButtonText: 'Okay'
+            });
+
+            // Close modal after adding to cart
+            closeBookModal();
+        } else {
+            // If out of stock, show an error alert
+            Swal.fire({
+                icon: 'error',
+                title: 'Out of Stock',
+                text: `${title} is out of stock.`,
+                confirmButtonText: 'Okay'
+            });
+        }
+    });
+
+    </script>
+
+    <footer class="footer">
+        <%- include('footer') %>
+    </footer>
+
+    <script type="text/javascript" src="/js/script.js"></script>
+    <script type="text/javascript" src="/js/add.js"></script>
+    <script type="text/javascript" src="/js/book.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="text/javascript" src="/js/cart.js"></script>
+    
+</body>
+</html>
